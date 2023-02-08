@@ -15,7 +15,7 @@ export const App = () => {
 
   useEffect(() => {
     dispatch(fetchContacts(search));
-  }, [search]);
+  }, [dispatch, search]);
   if (error) return <p>error</p>;
   return (
     <>
