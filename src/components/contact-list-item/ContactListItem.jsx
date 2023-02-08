@@ -1,13 +1,16 @@
 import { useDispatch } from 'react-redux';
-import { deleteContact } from 'redux/slice.contact';
+import { deleteContacts } from 'redux/operations.contacts';
 
-export const ContactListItem = ({ id, name, number }) => {
+export const ContactListItem = ({ id, name, phone }) => {
   const dispatch = useDispatch();
 
-  const handleDelete = () => dispatch(deleteContact(id));
+  const handleDelete = () => {
+    dispatch(deleteContacts(id));
+  };
+
   return (
     <li className="list-item">
-      {name}:{number}
+      {name}:{phone}
       <button onClick={handleDelete}>Delete</button>
     </li>
   );

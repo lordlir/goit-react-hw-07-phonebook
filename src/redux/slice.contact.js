@@ -1,38 +1,55 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { v4 as uuidv4 } from 'uuid';
 
-export const contactsArr = [
-  { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-  { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-  { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-  { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-];
+import {
+  addContacts,
+  deleteContacts,
+  fetchContacts,
+} from './operations.contacts';
+
+const contactsInitState = {
+  items: [],
+  isLoading: false,
+  error: null,
+};
 
 const ContactsSlice = createSlice({
   name: 'contacts',
-  initialState: { data: contactsArr },
-  reducers: {
-    addContact: {
-      reducer(state, action) {
-        state.data.push(action.payload);
-      },
-      prepare(name, number) {
-        return {
-          payload: {
-            name,
-            number,
-            id: uuidv4(),
-          },
-        };
-      },
+  initialState: contactsInitState,
+  extraReducers: {
+    [fetchContacts.pending](state) {
+      state.isLoading = true;
     },
-    deleteContact(state, action) {
-      const index = state.data.findIndex(
-        contact => contact.id === action.payload
-      );
-      state.data.splice(index, 1);
+    [fetchContacts.fulfilled](state, { payload }) {
+      state.isLoading = false;
+      state.items = payload;
+    },
+    [fetchContacts.rejected](state, { payload }) {
+      state.isLoading = false;
+      state.error = payload;
+    },
+    [addContacts.pending](state) {
+      state.isLoading = true;
+    },
+    [addContacts.fulfilled](state, { payload }) {
+      state.isLoading = false;
+      state.items.push(payload);
+    },
+    [addContacts.rejected](state, { payload }) {
+      state.isLoading = false;
+      state.error = payload;
+    },
+    [deleteContacts.pending](state) {
+      state.isLoading = true;
+    },
+    [deleteContacts.fulfilled](state, { payload }) {
+      state.isLoading = false;
+      state.items = state.items.filter(contact => contact.id !== payload);
+    },
+    [deleteContacts.rejected](state, { payload }) {
+      state.isLoading = false;
+      state.error = payload;
     },
   },
 });
-export const { addContact, deleteContact } = ContactsSlice.actions;
+
 export const ContactsReducer = ContactsSlice.reducer;
